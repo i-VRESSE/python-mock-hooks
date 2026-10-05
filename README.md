@@ -1,84 +1,46 @@
-# check-monkeypatch
+# [check-monkeypatch](https://github.com/i-VRESSE/check-monkeypatch)
 
-A pre-commit / prek hook that restricts pytest `monkeypatch` calls to:
+A pre-commit / prek hook that allows only these pytest `monkeypatch` methods:
+`chdir`, `setenv`, `delenv`, and `undo`. All other methods fail the check.
+For HTTP tests, prefer recording requests with
+[pytest-recording](https://github.com/kiwicom/pytest-recording).
 
-- `monkeypatch.chdir`
-- `monkeypatch.setenv`
-- `monkeypatch.delenv`
-- `monkeypatch.undo`
+The hook also gives LLM coding agents feedback when they run the checks:
+disallowed pytest `monkeypatch` calls, such as `monkeypatch.setattr`, fail
+with a message explaining which methods are allowed and pointing to
+pytest-recording for HTTP tests. This helps steer generated tests away from
+unwanted mocking.
 
-Other methods, including `setattr`, `delattr`, `setitem`, `delitem`,
-`syspath_prepend`, and `context`, fail the check. For HTTP tests, prefer
-recording and replaying requests with pytest-recording.
+Ruff [does not support custom lint plugins](https://docs.astral.sh/ruff/faq/#can-i-write-my-own-linter-plugins-for-ruff),
+so this hook adds the monkeypatch policy as a separate check alongside Ruff.
 
 ## Usage
 
-Add the following to your `.pre-commit-config.yaml`, replacing the repository
-URL and revision with where you publish this repository and its release tag
-or commit SHA:
+Requires Python 3.10 or newer. Dependencies are installed automatically.
+Add this to `.pre-commit-config.yaml`, replacing the revision with a release
+tag or commit SHA:
 
 ```yaml
 repos:
-  - repo: https://github.com/YOUR-ORG/check-monkeypatch
+  - repo: https://github.com/i-VRESSE/check-monkeypatch
     rev: YOUR-TAG-OR-COMMIT
     hooks:
       - id: check-monkeypatch
 ```
 
-Then run `prek run check-monkeypatch --all-files` or
-`pre-commit run check-monkeypatch --all-files`.
+Run `prek run check-monkeypatch --all-files` (or use `pre-commit` instead of `prek`).
 
-The hook uses `language: python`. Your hook runner installs this package and
-its pinned `ast-grep-cli` dependency automatically in an isolated environment.
-No uv, shell launcher, manual ast-grep installation, or project-local
-`sgconfig.yml` is needed. Use Python 3.10 or newer; first installation requires
-network access. ast-grep's available platform wheels determine platform support.
+Checks Python files under `tests/` by default. For another layout, set
+`files`, for example `files: ^(tests|test)/.*\.py$`.
 
-By default, the hook checks Python files under `tests/`. Override `files`
-for another layout, for example `files: ^(tests|test)/.*\.py$`.
-The rule is bundled in the installed package, so it does not depend on the
-consumer's working directory or ast-grep configuration.
+Only calls written as `monkeypatch.METHOD(...)` are checked, regardless of the
+object's type. Aliases, `unittest.mock`, and `mocker.patch` are not detected.
 
-## Scope
+## Contributing
 
-This is a syntax check for calls literally written as `monkeypatch.METHOD(...)`.
-It does not resolve aliases or types, and does not detect `unittest.mock`,
-`mocker.patch`, or calls through a differently named variable. It also rejects
-methods on unrelated objects named `monkeypatch`. It intentionally permits
-changes to the environment and working directory.
-
-## Development
-
-Install the project and development tools in a virtual environment:
-
-```sh
-python -m pip install -e . pytest pre-commit prek pyrefly
-```
-
-Alternatively, `uv sync` installs the project and its development dependency group.
-Neither uv nor the development tools are dependencies of the installed hook.
-
-```sh
-ast-grep test --config sgconfig.yml
-python -m pytest
-pyrefly check
-prek run --all-files
-```
-
-The rule and its test cases originated in protein-quest. Keep changes to the
-policy covered by valid and invalid examples in `tests/`.
-The pytest integration tests install a temporary copy of this repository
-through both pre-commit and prek. They check the packaged rule, filename
-filtering, failures, and paths with spaces without staging or committing files
-in this repository. Git and network access for installation are required.
-
-To change the ast-grep version, update `pyproject.toml` and the development
-rule-test hook in `.pre-commit-config.yaml`, then rerun the checks.
-Publish a tag after committing a release so consumers can pin it and use
-`prek autoupdate` or `pre-commit autoupdate` for subsequent updates.
-There is no need to publish the package to PyPI.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development and implementation details.
 
 ## License
 
-Apache-2.0; see [LICENSE](LICENSE). The rule and rule tests were copied from
+[Apache-2.0](LICENSE). Rule and rule tests adapted from
 [protein-quest](https://github.com/haddocking/protein-quest).
