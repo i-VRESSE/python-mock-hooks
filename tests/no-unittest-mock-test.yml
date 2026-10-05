@@ -1,0 +1,67 @@
+id: no-unittest-mock
+valid:
+  - import unittest
+  - from unittest import TestCase
+  - from unittest import TestCase as mock
+  - from other_library import mock
+  - from .unittest.mock import helper
+  - import unittest.mocking
+  - from unittest.mocking import helper
+  - 'text = "from unittest.mock import Mock"'
+  - '# unittest.mock.Mock()'
+  - mock = object()
+  - |-
+    from pytest import MonkeyPatch
+
+    def test_environment(monkeypatch: MonkeyPatch) -> None:
+        monkeypatch.setenv("APP_MODE", "test")
+  - |-
+    import pytest
+
+    def test_environment(monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.chdir("/tmp")
+  - |-
+    from __future__ import annotations
+    from typing import TYPE_CHECKING
+
+    if TYPE_CHECKING:
+        from pytest import MonkeyPatch
+
+    def test_environment(monkeypatch: MonkeyPatch) -> None:
+        monkeypatch.setenv("APP_MODE", "test")
+invalid:
+  - import unittest.mock
+  - import unittest.mock as mock
+  - import os, unittest.mock as m
+  - import unittest.mock, os
+  - from unittest import mock
+  - from unittest import mock as m
+  - from unittest import TestCase, mock as m
+  - from unittest import mock, TestCase
+  - from unittest.mock import Mock
+  - from unittest.mock import Mock as Fake
+  - from unittest.mock import patch, MagicMock, AsyncMock
+  - from unittest.mock import *
+  - from unittest.mock import sentinel
+  - |-
+    from unittest import (
+        TestCase,
+        mock as m,
+    )
+  - |-
+    from unittest.mock import (
+        Mock,
+        patch as replace,
+    )
+  - |-
+    def test_example():
+        from unittest.mock import Mock
+        Mock()
+  - unittest.mock.Mock()
+  - |-
+    @unittest.mock.patch("example.function")
+    def test_example(fake):
+        pass
+  - |-
+    with unittest.mock.patch("example.function"):
+        pass

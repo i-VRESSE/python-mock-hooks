@@ -1,4 +1,4 @@
 ruleDirs:
-  - src/check_monkeypatch/rules
+  - src/python_mock_hooks/rules
 testConfigs:
   - testDir: tests

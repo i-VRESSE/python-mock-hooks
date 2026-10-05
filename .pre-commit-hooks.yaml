@@ -1,7 +1,7 @@
-- id: check-monkeypatch
-  name: Check allowed monkeypatch methods
-  description: Allow only monkeypatch.chdir, setenv, delenv, and undo.
-  entry: check-monkeypatch
+- id: python-mock-hooks
+  name: Check monkeypatch and unittest.mock usage
+  description: Restrict monkeypatch methods and forbid unittest.mock in tests.
+  entry: python-mock-hooks
   language: python
   types: [python]
   files: ^tests/.*\.py$

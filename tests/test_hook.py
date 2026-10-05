@@ -55,7 +55,7 @@ def test_installed_hook(
     checked("git", "init", "-q", cwd=tmp_path)
     (tmp_path / ".pre-commit-config.yaml").write_text(
         f"repos:\n  - repo: {json.dumps(str(repo))}\n    rev: {revision}\n"
-        "    hooks:\n      - id: check-monkeypatch\n"
+        "    hooks:\n      - id: python-mock-hooks\n"
     )
     (tmp_path / "tests").mkdir()
     (tmp_path / "src").mkdir()
@@ -64,28 +64,37 @@ def test_installed_hook(
         'monkeypatch.delenv("X")\nmonkeypatch.undo()\n'
     )
     forbidden = 'monkeypatch.setattr(obj, "name", value)\n'
-    (tmp_path / "src/ignored.py").write_text(forbidden)
+    forbidden_mock = "from unittest.mock import Mock as Fake\nFake()\n"
+    (tmp_path / "src/ignored.py").write_text(forbidden + forbidden_mock)
     (tmp_path / "tests/ignored.txt").write_text(forbidden)
     # A broken consumer config must not affect the packaged rule.
     (tmp_path / "sgconfig.yml").write_text("ruleDirs: [does-not-exist]\n")
     checked("git", "add", ".", cwd=tmp_path)
-    checked(runner, "run", "check-monkeypatch", "--all-files", cwd=tmp_path)
+    checked(runner, "run", "python-mock-hooks", "--all-files", cwd=tmp_path)
     (tmp_path / "tests/test forbidden.py").write_text(forbidden)
     checked("git", "add", ".", cwd=tmp_path)
-    result = run(runner, "run", "check-monkeypatch", "--all-files", cwd=tmp_path)
+    result = run(runner, "run", "python-mock-hooks", "--all-files", cwd=tmp_path)
     assert result.returncode != 0
     assert "no-forbidden-monkeypatch" in result.stdout + result.stderr
     assert "test forbidden.py" in result.stdout + result.stderr
 
+    (tmp_path / "tests/test forbidden.py").write_text("pass\n")
+    (tmp_path / "tests/test mock.py").write_text(forbidden_mock)
+    checked("git", "add", ".", cwd=tmp_path)
+    result = run(runner, "run", "python-mock-hooks", "--all-files", cwd=tmp_path)
+    assert result.returncode != 0
+    assert "no-unittest-mock" in result.stdout + result.stderr
+    assert "test mock.py" in result.stdout + result.stderr
+
 
 def test_no_filenames_does_not_scan(tmp_path: Path) -> None:
     (tmp_path / "bad.py").write_text('monkeypatch.setattr(obj, "name", value)\n')
-    checked("check-monkeypatch", cwd=tmp_path)
+    checked("python-mock-hooks", cwd=tmp_path)
 
 
 def test_no_uv_dependency(tmp_path: Path) -> None:
     # Give the command only ast-grep on PATH; neither uv nor uvx is available.
-    command = shutil.which("check-monkeypatch")
+    command = shutil.which("python-mock-hooks")
     ast_grep = shutil.which("ast-grep")
     assert command is not None and ast_grep is not None
     bin_dir = tmp_path / "bin"

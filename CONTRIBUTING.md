@@ -2,20 +2,20 @@
 
 ## Development
 
-Install the project and development tools in a virtual environment:
+Use uv to create the virtual environment and install the project and its
+development dependencies:
 
 ```sh
-python -m pip install -e . pytest pre-commit prek pyrefly
+uv sync
 ```
 
-Alternatively, `uv sync` installs the project and its development dependency group.
 Neither uv nor the development tools are dependencies of the installed hook.
 
 ```sh
-ast-grep test --config sgconfig.yml
-python -m pytest
-pyrefly check
-prek run --all-files
+uv run ast-grep test --config sgconfig.yml
+uv run pytest
+uv run pyrefly check
+uv run prek run --all-files
 ```
 
 The rule and its test cases originated in protein-quest. Keep changes to the
@@ -28,7 +28,7 @@ in this repository. Git and network access for installation are required.
 To change the ast-grep version, update `pyproject.toml` and the development
 rule-test hook in `.pre-commit-config.yaml`, then rerun the checks.
 Publish a tag after committing a release so consumers can pin it and use
-`prek autoupdate` or `pre-commit autoupdate` for subsequent updates.
+`uv run prek autoupdate` or `uv run pre-commit autoupdate` for subsequent updates.
 There is no need to publish the package to PyPI.
 
 ## Implementation
@@ -38,19 +38,30 @@ its pinned `ast-grep-cli` dependency from `pyproject.toml` into an isolated
 environment. Installation requires network access; ast-grep's available
 platform wheels determine platform support.
 
-The `check-monkeypatch` entry point in `src/check_monkeypatch/__init__.py`
-locates the bundled YAML rule using `importlib.resources` and runs
-`ast-grep scan --rule` with its absolute path. It forwards the filenames
+The `python-mock-hooks` entry point in `src/python_mock_hooks/__init__.py`
+locates the bundled `sgconfig.yml` beside the installed module and runs
+`ast-grep scan --config` with its absolute path. It forwards the filenames
 supplied by the hook runner and returns ast-grep's exit status. With no
 filenames, it exits successfully without scanning the working directory.
 
-The rule lives in `src/check_monkeypatch/rules/` and is included in the
-installed package. Consumers do not need a local `sgconfig.yml`; their
-working directory and ast-grep configuration do not determine which rule
-runs. This repository's `sgconfig.yml` is used to run the rule tests.
+The static rules live in `src/python_mock_hooks/rules/` and are included in
+the installed package with its configuration. Consumers do not need a local
+`sgconfig.yml`; their working directory and ast-grep configuration do not
+determine which rules run. The root `sgconfig.yml` adds the rule-test directory
+for development.
 
-The policy matches calls literally written as `monkeypatch.METHOD(...)`
-and permits `chdir`, `setenv`, `delenv`, and `undo`. It does not resolve
-aliases or types, so unrelated objects named `monkeypatch` are also checked.
-Changes to environment variables and the working directory are intentionally
-allowed. This hook does not detect `unittest.mock` or `mocker.patch`.
+The monkeypatch policy matches calls literally written as
+`monkeypatch.METHOD(...)` and permits `chdir`, `setenv`, `delenv`, and `undo`.
+It does not resolve aliases or types, so unrelated objects named
+`monkeypatch` are also checked. Changes to environment variables and the
+working directory are intentionally allowed.
+
+The `no-unittest-mock` rule rejects imports of `unittest.mock`, imports from
+that module, `from unittest import mock`, and direct `unittest.mock`
+references. Import checks catch aliases, multiple imports, and multiline
+imports without tracing subsequent calls. Unused imports are also rejected.
+Ordinary `unittest` and `TestCase` imports remain allowed.
+
+These are syntax rules, not name resolution: dynamic imports, re-exports,
+`import unittest as ut; ut.mock.Mock()`, and `mocker.patch` are outside their
+scope. A local object named `unittest` with a `mock` attribute is also matched.

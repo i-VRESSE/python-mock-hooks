@@ -19,4 +19,4 @@ repos:
         entry: ast-grep test --config sgconfig.yml
         additional_dependencies: ["ast-grep-cli==0.45.2"]
         pass_filenames: false
-        files: ^(src/check_monkeypatch/rules/|tests/|sgconfig\.yml$)
+        files: ^(src/python_mock_hooks/rules/|tests/|sgconfig\.yml$)

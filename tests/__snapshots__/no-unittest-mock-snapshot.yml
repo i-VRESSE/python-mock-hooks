@@ -1,0 +1,224 @@
+id: no-unittest-mock
+snapshots:
+  ? |-
+    @unittest.mock.patch("example.function")
+    def test_example(fake):
+        pass
+  : labels:
+    - source: unittest.mock
+      style: primary
+      start: 1
+      end: 14
+  ? |-
+    def test_example():
+        from unittest.mock import Mock
+        Mock()
+  : labels:
+    - source: from unittest.mock import Mock
+      style: primary
+      start: 24
+      end: 54
+    - source: unittest.mock
+      style: secondary
+      start: 29
+      end: 42
+  ? |-
+    from unittest import (
+        TestCase,
+        mock as m,
+    )
+  : labels:
+    - source: |-
+        from unittest import (
+            TestCase,
+            mock as m,
+        )
+      style: primary
+      start: 0
+      end: 53
+    - source: unittest
+      style: secondary
+      start: 5
+      end: 13
+    - source: mock
+      style: secondary
+      start: 41
+      end: 45
+  from unittest import TestCase, mock as m:
+    labels:
+    - source: from unittest import TestCase, mock as m
+      style: primary
+      start: 0
+      end: 40
+    - source: unittest
+      style: secondary
+      start: 5
+      end: 13
+    - source: mock
+      style: secondary
+      start: 31
+      end: 35
+  from unittest import mock:
+    labels:
+    - source: from unittest import mock
+      style: primary
+      start: 0
+      end: 25
+    - source: unittest
+      style: secondary
+      start: 5
+      end: 13
+    - source: mock
+      style: secondary
+      start: 21
+      end: 25
+  from unittest import mock as m:
+    labels:
+    - source: from unittest import mock as m
+      style: primary
+      start: 0
+      end: 30
+    - source: unittest
+      style: secondary
+      start: 5
+      end: 13
+    - source: mock
+      style: secondary
+      start: 21
+      end: 25
+  from unittest import mock, TestCase:
+    labels:
+    - source: from unittest import mock, TestCase
+      style: primary
+      start: 0
+      end: 35
+    - source: unittest
+      style: secondary
+      start: 5
+      end: 13
+    - source: mock
+      style: secondary
+      start: 21
+      end: 25
+  ? |-
+    from unittest.mock import (
+        Mock,
+        patch as replace,
+    )
+  : labels:
+    - source: |-
+        from unittest.mock import (
+            Mock,
+            patch as replace,
+        )
+      style: primary
+      start: 0
+      end: 61
+    - source: unittest.mock
+      style: secondary
+      start: 5
+      end: 18
+  from unittest.mock import *:
+    labels:
+    - source: from unittest.mock import *
+      style: primary
+      start: 0
+      end: 27
+    - source: unittest.mock
+      style: secondary
+      start: 5
+      end: 18
+  from unittest.mock import Mock:
+    labels:
+    - source: from unittest.mock import Mock
+      style: primary
+      start: 0
+      end: 30
+    - source: unittest.mock
+      style: secondary
+      start: 5
+      end: 18
+  from unittest.mock import Mock as Fake:
+    labels:
+    - source: from unittest.mock import Mock as Fake
+      style: primary
+      start: 0
+      end: 38
+    - source: unittest.mock
+      style: secondary
+      start: 5
+      end: 18
+  from unittest.mock import patch, MagicMock, AsyncMock:
+    labels:
+    - source: from unittest.mock import patch, MagicMock, AsyncMock
+      style: primary
+      start: 0
+      end: 53
+    - source: unittest.mock
+      style: secondary
+      start: 5
+      end: 18
+  from unittest.mock import sentinel:
+    labels:
+    - source: from unittest.mock import sentinel
+      style: primary
+      start: 0
+      end: 34
+    - source: unittest.mock
+      style: secondary
+      start: 5
+      end: 18
+  import os, unittest.mock as m:
+    labels:
+    - source: import os, unittest.mock as m
+      style: primary
+      start: 0
+      end: 29
+    - source: unittest.mock
+      style: secondary
+      start: 11
+      end: 24
+  import unittest.mock:
+    labels:
+    - source: import unittest.mock
+      style: primary
+      start: 0
+      end: 20
+    - source: unittest.mock
+      style: secondary
+      start: 7
+      end: 20
+  import unittest.mock as mock:
+    labels:
+    - source: import unittest.mock as mock
+      style: primary
+      start: 0
+      end: 28
+    - source: unittest.mock
+      style: secondary
+      start: 7
+      end: 20
+  import unittest.mock, os:
+    labels:
+    - source: import unittest.mock, os
+      style: primary
+      start: 0
+      end: 24
+    - source: unittest.mock
+      style: secondary
+      start: 7
+      end: 20
+  unittest.mock.Mock():
+    labels:
+    - source: unittest.mock
+      style: primary
+      start: 0
+      end: 13
+  ? |-
+    with unittest.mock.patch("example.function"):
+        pass
+  : labels:
+    - source: unittest.mock
+      style: primary
+      start: 5
+      end: 18

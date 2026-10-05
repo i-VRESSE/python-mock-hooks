@@ -17,6 +17,25 @@ valid:
   - |-
     def test_other_fixture(mpk):
         mpk.setattr("requests.get", mock)
+  - |-
+    from pytest import MonkeyPatch
+
+    def test_environment(monkeypatch: MonkeyPatch) -> None:
+        monkeypatch.setenv("APP_MODE", "test")
+  - |-
+    import pytest
+
+    def test_environment(monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.chdir("/tmp")
+  - |-
+    from __future__ import annotations
+    from typing import TYPE_CHECKING
+
+    if TYPE_CHECKING:
+        from pytest import MonkeyPatch
+
+    def test_environment(monkeypatch: MonkeyPatch) -> None:
+        monkeypatch.setenv("APP_MODE", "test")
 invalid:
   - |-
     def test_http(monkeypatch):
