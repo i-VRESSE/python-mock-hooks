@@ -1,0 +1,4 @@
+ruleDirs:
+  - src/check_monkeypatch/rules
+testConfigs:
+  - testDir: tests

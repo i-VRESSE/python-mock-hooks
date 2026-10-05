@@ -1,0 +1,8 @@
+- id: check-monkeypatch
+  name: Check allowed monkeypatch methods
+  description: Allow only monkeypatch.chdir, setenv, delenv, and undo.
+  entry: check-monkeypatch
+  language: python
+  types: [python]
+  files: ^tests/.*\.py$
+  require_serial: true

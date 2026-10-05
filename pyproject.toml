@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "check-monkeypatch"
+version = "0.1.0"
+description = "A pre-commit hook restricting pytest monkeypatch methods"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+dependencies = ["ast-grep-cli==0.45.2"]
+
+[project.scripts]
+check-monkeypatch = "check_monkeypatch:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/check_monkeypatch"]
+
+[dependency-groups]
+dev = ["pytest", "pre-commit", "prek", "pyrefly"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.pyrefly]
+project-includes = ["src", "tests"]
