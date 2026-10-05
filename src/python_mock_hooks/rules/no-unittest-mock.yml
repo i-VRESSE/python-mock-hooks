@@ -1,0 +1,25 @@
+id: no-unittest-mock
+language: Python
+severity: error
+message: Do not use unittest.mock in tests; record HTTP calls with pytest-recording instead
+rule:
+  any:
+    - kind: import_statement
+      has:
+        kind: dotted_name
+        regex: '^unittest\.mock(\.|$)'
+        stopBy: end
+    - kind: import_from_statement
+      has:
+        field: module_name
+        regex: '^unittest\.mock(\.|$)'
+    - kind: import_from_statement
+      all:
+        - has:
+            field: module_name
+            regex: '^unittest$'
+        - has:
+            kind: dotted_name
+            regex: '^mock$'
+            stopBy: end
+    - pattern: unittest.mock
