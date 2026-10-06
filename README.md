@@ -1,5 +1,7 @@
 # python-mock-hooks
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23183666.svg)](https://doi.org/10.5281/zenodo.23183666)
+
 A pre-commit / prek hook that restricts mocking in Python tests:
 
 - **Blocks**:
