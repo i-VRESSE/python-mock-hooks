@@ -1,8 +1,10 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/j178/prek/master/prek-hooks.schema.json
 - id: python-mock-hooks
-  name: Check monkeypatch and unittest.mock usage
-  description: Restrict monkeypatch methods and forbid unittest.mock in tests.
+  name: Check mocking policy
+  description: Restrict monkeypatch, unittest.mock, and mocker.patch in tests.
   entry: python-mock-hooks
   language: python
   types: [python]
   files: ^tests/.*\.py$
   require_serial: true
+  stages: [pre-commit, pre-merge-commit, pre-push, manual]

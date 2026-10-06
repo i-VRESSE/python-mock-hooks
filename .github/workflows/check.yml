@@ -11,6 +11,7 @@ jobs:
         with:
           python-version: "3.11"
       - run: uv sync
+      - run: uv run prek validate-manifest .pre-commit-hooks.yaml
       - run: uv run ast-grep test --config sgconfig.yml
       - run: uv run pytest
       - run: uv run pyrefly check

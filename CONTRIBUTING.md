@@ -12,6 +12,7 @@ uv sync
 Neither uv nor the development tools are dependencies of the installed hook.
 
 ```sh
+uv run prek validate-manifest .pre-commit-hooks.yaml
 uv run ast-grep test --config sgconfig.yml
 uv run pytest
 uv run pyrefly check
