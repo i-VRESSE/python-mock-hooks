@@ -62,6 +62,13 @@ references. Import checks catch aliases, multiple imports, and multiline
 imports without tracing subsequent calls. Unused imports are also rejected.
 Ordinary `unittest` and `TestCase` imports remain allowed.
 
+The `no-mocker-patch` rule rejects `patch` attribute references on `mocker`
+and its `class_mocker`, `module_mocker`, `package_mocker`, and `session_mocker`
+variants. Matching the attribute also catches chained forms such as
+`mocker.patch.object` and assignments such as `replace = mocker.patch`.
+Other pytest-mock APIs remain allowed.
+
 These are syntax rules, not name resolution: dynamic imports, re-exports,
-`import unittest as ut; ut.mock.Mock()`, and `mocker.patch` are outside their
-scope. A local object named `unittest` with a `mock` attribute is also matched.
+`import unittest as ut; ut.mock.Mock()`, and renamed mocker fixtures are
+outside their scope. Local objects with the checked names and attributes
+are also matched.

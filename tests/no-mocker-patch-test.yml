@@ -1,0 +1,35 @@
+id: no-mocker-patch
+valid:
+  - service.calculate()
+  - mocker.spy(service, "calculate")
+  - mocker.Mock()
+  - mocker.patchy("example.calculate")
+  - other.patch("example.calculate")
+  - 'text = "mocker.patch(\"example.calculate\")"'
+  - '# mocker.patch("example.calculate")'
+  - replacement.patch("example.calculate")
+invalid:
+  - mocker.patch("example.calculate")
+  - mocker.patch("example.calculate", return_value=42)
+  - mocker.patch.object(service, "calculate", return_value=42)
+  - 'mocker.patch.dict(settings, {"enabled": False})'
+  - mocker.patch.multiple(service, calculate=fake, save=fake)
+  - mocker.patch.context_manager(service, "calculate")
+  - replacement = mocker.patch
+  - class_mocker.patch("example.calculate")
+  - module_mocker.patch("example.calculate")
+  - package_mocker.patch("example.calculate")
+  - session_mocker.patch("example.calculate")
+  - |-
+    def test_calculate(mocker):
+        mocker.patch(
+            "example.calculate",
+            return_value=42,
+        )
+  - |-
+    @mocker.patch("example.calculate")
+    def test_calculate(fake):
+        pass
+  - |-
+    with mocker.patch("example.calculate"):
+        service.run()

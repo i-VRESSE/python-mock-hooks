@@ -1,0 +1,9 @@
+id: no-mocker-patch
+language: Python
+severity: error
+message: Do not use mocker.patch in tests; exercise real implementations and record HTTP calls with pytest-recording instead
+rule:
+  pattern: $MOCKER.patch
+constraints:
+  MOCKER:
+    regex: '^(mocker|class_mocker|module_mocker|package_mocker|session_mocker)$'

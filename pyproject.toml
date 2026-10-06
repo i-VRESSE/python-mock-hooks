@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "python-mock-hooks"
-version = "0.1.0"
+version = "0.2.0"
 description = "A pre-commit hook restricting monkeypatch methods and unittest.mock"
 readme = "README.md"
 requires-python = ">=3.11"

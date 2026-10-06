@@ -65,7 +65,10 @@ def test_installed_hook(
     )
     forbidden = 'monkeypatch.setattr(obj, "name", value)\n'
     forbidden_mock = "from unittest.mock import Mock as Fake\nFake()\n"
-    (tmp_path / "src/ignored.py").write_text(forbidden + forbidden_mock)
+    forbidden_mocker = 'mocker.patch.object(service, "calculate", return_value=42)\n'
+    (tmp_path / "src/ignored.py").write_text(
+        forbidden + forbidden_mock + forbidden_mocker
+    )
     (tmp_path / "tests/ignored.txt").write_text(forbidden)
     # A broken consumer config must not affect the packaged rule.
     (tmp_path / "sgconfig.yml").write_text("ruleDirs: [does-not-exist]\n")
@@ -85,6 +88,14 @@ def test_installed_hook(
     assert result.returncode != 0
     assert "no-unittest-mock" in result.stdout + result.stderr
     assert "test mock.py" in result.stdout + result.stderr
+
+    (tmp_path / "tests/test mock.py").write_text("pass\n")
+    (tmp_path / "tests/test mocker.py").write_text(forbidden_mocker)
+    checked("git", "add", ".", cwd=tmp_path)
+    result = run(runner, "run", "python-mock-hooks", "--all-files", cwd=tmp_path)
+    assert result.returncode != 0
+    assert "no-mocker-patch" in result.stdout + result.stderr
+    assert "test mocker.py" in result.stdout + result.stderr
 
 
 def test_no_filenames_does_not_scan(tmp_path: Path) -> None:

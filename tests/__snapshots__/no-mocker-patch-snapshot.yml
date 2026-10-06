@@ -1,0 +1,96 @@
+id: no-mocker-patch
+snapshots:
+  ? |-
+    @mocker.patch("example.calculate")
+    def test_calculate(fake):
+        pass
+  : labels:
+    - source: mocker.patch
+      style: primary
+      start: 1
+      end: 13
+  class_mocker.patch("example.calculate"):
+    labels:
+    - source: class_mocker.patch
+      style: primary
+      start: 0
+      end: 18
+  ? |-
+    def test_calculate(mocker):
+        mocker.patch(
+            "example.calculate",
+            return_value=42,
+        )
+  : labels:
+    - source: mocker.patch
+      style: primary
+      start: 32
+      end: 44
+  mocker.patch("example.calculate"):
+    labels:
+    - source: mocker.patch
+      style: primary
+      start: 0
+      end: 12
+  mocker.patch("example.calculate", return_value=42):
+    labels:
+    - source: mocker.patch
+      style: primary
+      start: 0
+      end: 12
+  mocker.patch.context_manager(service, "calculate"):
+    labels:
+    - source: mocker.patch
+      style: primary
+      start: 0
+      end: 12
+  'mocker.patch.dict(settings, {"enabled": False})':
+    labels:
+    - source: mocker.patch
+      style: primary
+      start: 0
+      end: 12
+  mocker.patch.multiple(service, calculate=fake, save=fake):
+    labels:
+    - source: mocker.patch
+      style: primary
+      start: 0
+      end: 12
+  mocker.patch.object(service, "calculate", return_value=42):
+    labels:
+    - source: mocker.patch
+      style: primary
+      start: 0
+      end: 12
+  module_mocker.patch("example.calculate"):
+    labels:
+    - source: module_mocker.patch
+      style: primary
+      start: 0
+      end: 19
+  package_mocker.patch("example.calculate"):
+    labels:
+    - source: package_mocker.patch
+      style: primary
+      start: 0
+      end: 20
+  replacement = mocker.patch:
+    labels:
+    - source: mocker.patch
+      style: primary
+      start: 14
+      end: 26
+  session_mocker.patch("example.calculate"):
+    labels:
+    - source: session_mocker.patch
+      style: primary
+      start: 0
+      end: 20
+  ? |-
+    with mocker.patch("example.calculate"):
+        service.run()
+  : labels:
+    - source: mocker.patch
+      style: primary
+      start: 5
+      end: 17
