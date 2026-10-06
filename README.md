@@ -25,7 +25,7 @@ tag or commit SHA:
 ```yaml
 repos:
   - repo: https://github.com/i-VRESSE/python-mock-hooks
-    rev: YOUR-TAG-OR-COMMIT
+    rev: v0.1.0
     hooks:
       - id: python-mock-hooks
 ```
@@ -46,9 +46,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development and implementation detail
 
 ## Acknowledgments
 
-Inspired by [PFCCLab/ast-grep-pre-commit-mirror](https://github.com/PFCCLab/ast-grep-pre-commit-mirror/).
 Rule and rule tests adapted from
 [protein-quest](https://github.com/haddocking/protein-quest).
+Inspired by [PFCCLab/ast-grep-pre-commit-mirror](https://github.com/PFCCLab/ast-grep-pre-commit-mirror/).
 
 ## License
 
