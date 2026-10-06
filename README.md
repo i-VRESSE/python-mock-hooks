@@ -1,4 +1,4 @@
-# [python-mock-hooks](https://github.com/i-VRESSE/python-mock-hooks)
+# python-mock-hooks
 
 A pre-commit / prek hook that restricts mocking in Python tests:
 
@@ -24,8 +24,10 @@ so this hook adds these testing policies as a separate check alongside Ruff.
 ## Usage
 
 Requires Python 3.11 or newer. Dependencies are installed automatically.
-Add this to `.pre-commit-config.yaml`, replacing the revision with a release
-tag or commit SHA:
+Choose one configuration format, replacing the revision with a release tag
+or commit SHA.
+
+For `.pre-commit-config.yaml` (pre-commit or prek):
 
 ```yaml
 repos:
@@ -35,10 +37,22 @@ repos:
       - id: python-mock-hooks
 ```
 
+For `prek.toml` (prek):
+
+```toml
+[[repos]]
+repo = "https://github.com/i-VRESSE/python-mock-hooks"
+rev = "v0.2.0"
+hooks = [{ id = "python-mock-hooks" }]
+```
+
 Run `prek run python-mock-hooks --all-files` (or use `pre-commit` instead of `prek`).
 
 Checks Python files under `tests/` by default. For another layout, set
-`files`, for example `files: ^(tests|test)/.*\.py$`.
+`files` on the hook:
+
+- YAML: `files: ^(tests|test)/.*\.py$`
+- TOML: `files = '^(tests|test)/.*\.py$'`
 
 ## Contributing
 
