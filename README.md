@@ -3,7 +3,9 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23183666.svg)](https://doi.org/10.5281/zenodo.23183666)
 [![Research Software Directory Badge](https://img.shields.io/badge/rsd-00a3e3.svg)](https://research-software-directory.org/software/python-mock-precommit-hook)
 
-A pre-commit / prek hook that restricts mocking in Python tests:
+Two independently selectable pre-commit / prek hooks for Python tests.
+
+### `python-mock-hooks`
 
 - **Blocks**:
   - `unittest.mock` imports and references.
@@ -19,10 +21,21 @@ A pre-commit / prek hook that restricts mocking in Python tests:
 For HTTP tests, prefer recording requests with
 [pytest-recording](https://github.com/kiwicom/pytest-recording).
 
+### `tests-without-ifs`
+
+Blocks `if` / `elif` / `else` branching statements inside `test_*` functions
+and methods, including async tests. Use separate tests or
+`pytest.mark.parametrize` for each case instead.
+
+Permits `if` statements in fixtures, helpers (including nested helpers), and
+at module or class scope, as well as conditional expressions
+(`a if condition else b`) and comprehension filters. This hook does not
+restrict mocking; `python-mock-hooks` does not restrict branching.
+
 Check failures explain the policy to developers and LLM coding agents.
 
 Ruff [does not support custom lint plugins](https://docs.astral.sh/ruff/faq/#can-i-write-my-own-linter-plugins-for-ruff),
-so this hook adds these testing policies as a separate check alongside Ruff.
+so these hooks add testing policies as separate checks alongside Ruff.
 
 ## Usage
 
@@ -35,9 +48,10 @@ For `.pre-commit-config.yaml` (pre-commit or prek):
 ```yaml
 repos:
   - repo: https://github.com/i-VRESSE/python-mock-hooks
-    rev: v0.2.0
+    rev: v0.3.0
     hooks:
       - id: python-mock-hooks
+      - id: tests-without-ifs
 ```
 
 For `prek.toml` (prek):
@@ -45,14 +59,15 @@ For `prek.toml` (prek):
 ```toml
 [[repos]]
 repo = "https://github.com/i-VRESSE/python-mock-hooks"
-rev = "v0.2.0"
-hooks = [{ id = "python-mock-hooks" }]
+rev = "v0.3.0"
+hooks = [{ id = "python-mock-hooks" }, { id = "tests-without-ifs" }]
 ```
 
-Run `prek run python-mock-hooks --all-files` (or use `pre-commit` instead of `prek`).
+Enable either hook or both. Run `prek run --all-files` to run all enabled hooks
+(or use `pre-commit` instead of `prek`).
 
-Checks Python files under `tests/` by default. For another layout, set
-`files` on the hook:
+Both hooks check Python files under `tests/` by default. For another layout,
+set `files` on each enabled hook:
 
 - YAML: `files: ^(tests|test)/.*\.py$`
 - TOML: `files = '^(tests|test)/.*\.py$'`

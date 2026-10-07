@@ -1,0 +1,220 @@
+id: no-if-in-tests
+snapshots:
+  ? |-
+    @pytest.mark.parametrize("enabled", [True, False])
+    def test_result(enabled):
+        if enabled:
+            assert result == 1
+  : labels:
+    - source: |-
+        if enabled:
+                assert result == 1
+      style: primary
+      start: 81
+      end: 119
+    - source: test_result
+      style: secondary
+      start: 55
+      end: 66
+    - source: |-
+        def test_result(enabled):
+            if enabled:
+                assert result == 1
+      style: secondary
+      start: 51
+      end: 119
+  ? |-
+    async def test_result():
+        if enabled:
+            assert await calculate() == 1
+  : labels:
+    - source: |-
+        if enabled:
+                assert await calculate() == 1
+      style: primary
+      start: 29
+      end: 78
+    - source: test_result
+      style: secondary
+      start: 10
+      end: 21
+    - source: |-
+        async def test_result():
+            if enabled:
+                assert await calculate() == 1
+      style: secondary
+      start: 0
+      end: 78
+  ? |-
+    class TestResult:
+        def test_result(self):
+            if enabled:
+                assert result == 1
+  : labels:
+    - source: |-
+        if enabled:
+                    assert result == 1
+      style: primary
+      start: 53
+      end: 95
+    - source: test_result
+      style: secondary
+      start: 26
+      end: 37
+    - source: |-
+        def test_result(self):
+                if enabled:
+                    assert result == 1
+      style: secondary
+      start: 22
+      end: 95
+  ? |-
+    def test_result():
+        for result in results:
+            if result:
+                assert result == 1
+  : labels:
+    - source: |-
+        if result:
+                    assert result == 1
+      style: primary
+      start: 54
+      end: 95
+    - source: test_result
+      style: secondary
+      start: 4
+      end: 15
+    - source: |-
+        def test_result():
+            for result in results:
+                if result:
+                    assert result == 1
+      style: secondary
+      start: 0
+      end: 95
+  ? |-
+    def test_result():
+        if enabled:
+            assert result == 1
+  : labels:
+    - source: |-
+        if enabled:
+                assert result == 1
+      style: primary
+      start: 23
+      end: 61
+    - source: test_result
+      style: secondary
+      start: 4
+      end: 15
+    - source: |-
+        def test_result():
+            if enabled:
+                assert result == 1
+      style: secondary
+      start: 0
+      end: 61
+  ? |-
+    def test_result():
+        if enabled:
+            assert result == 1
+        elif fallback:
+            assert result == 2
+        else:
+            assert result == 3
+  : labels:
+    - source: |-
+        if enabled:
+                assert result == 1
+            elif fallback:
+                assert result == 2
+            else:
+                assert result == 3
+      style: primary
+      start: 23
+      end: 144
+    - source: test_result
+      style: secondary
+      start: 4
+      end: 15
+    - source: |-
+        def test_result():
+            if enabled:
+                assert result == 1
+            elif fallback:
+                assert result == 2
+            else:
+                assert result == 3
+      style: secondary
+      start: 0
+      end: 144
+  ? |-
+    def test_result():
+        if enabled: assert result == 1
+  : labels:
+    - source: 'if enabled: assert result == 1'
+      style: primary
+      start: 23
+      end: 53
+    - source: test_result
+      style: secondary
+      start: 4
+      end: 15
+    - source: |-
+        def test_result():
+            if enabled: assert result == 1
+      style: secondary
+      start: 0
+      end: 53
+  ? |-
+    def test_result():
+        try:
+            calculate()
+        except ValueError:
+            if enabled:
+                pytest.fail("unexpected error")
+  : labels:
+    - source: |-
+        if enabled:
+                    pytest.fail("unexpected error")
+      style: primary
+      start: 79
+      end: 134
+    - source: test_result
+      style: secondary
+      start: 4
+      end: 15
+    - source: |-
+        def test_result():
+            try:
+                calculate()
+            except ValueError:
+                if enabled:
+                    pytest.fail("unexpected error")
+      style: secondary
+      start: 0
+      end: 134
+  ? |-
+    def test_result():
+        with context():
+            if enabled:
+                assert result == 1
+  : labels:
+    - source: |-
+        if enabled:
+                    assert result == 1
+      style: primary
+      start: 47
+      end: 89
+    - source: test_result
+      style: secondary
+      start: 4
+      end: 15
+    - source: |-
+        def test_result():
+            with context():
+                if enabled:
+                    assert result == 1
+      style: secondary
+      start: 0
+      end: 89

@@ -13,6 +13,7 @@ dependencies = ["ast-grep-cli==0.45.2"]
 
 [project.scripts]
 python-mock-hooks = "python_mock_hooks:main"
+tests-without-ifs = "python_mock_hooks:tests_without_ifs"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/python_mock_hooks"]

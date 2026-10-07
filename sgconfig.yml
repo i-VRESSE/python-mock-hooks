@@ -1,4 +1,5 @@
 ruleDirs:
   - src/python_mock_hooks/rules
+  - src/python_mock_hooks/if-rules
 testConfigs:
   - testDir: tests

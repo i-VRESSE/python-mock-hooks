@@ -1,0 +1,96 @@
+id: no-if-in-tests
+valid:
+  - |-
+    def test_result():
+        assert result == expected
+  - |-
+    @pytest.mark.parametrize("value, expected", [(1, 2), (2, 3)])
+    def test_result(value, expected):
+        assert calculate(value) == expected
+  - |-
+    if TYPE_CHECKING:
+        from example import Result
+  - |-
+    @pytest.fixture
+    def resource():
+        if available:
+            return create_resource()
+  - |-
+    def helper(value):
+        if value:
+            return value
+  - |-
+    def test_result():
+        def helper(value):
+            if value:
+                return value
+        assert helper(1) == 1
+  - |-
+    def test_result():
+        class Result:
+            if enabled:
+                value = 1
+        assert Result.value == 1
+  - |-
+    class TestResult:
+        def helper(self):
+            if enabled:
+                return 1
+  - |-
+    def test_result():
+        text = "if enabled: pass"
+        # if enabled: pass
+        assert text
+  - |-
+    def test_result():
+        assert [value for value in values if value] == [1]
+  - |-
+    def test_result():
+        assert (1 if enabled else 2) == expected
+invalid:
+  - |-
+    def test_result():
+        if enabled:
+            assert result == 1
+  - |-
+    def test_result():
+        if enabled:
+            assert result == 1
+        elif fallback:
+            assert result == 2
+        else:
+            assert result == 3
+  - |-
+    async def test_result():
+        if enabled:
+            assert await calculate() == 1
+  - |-
+    class TestResult:
+        def test_result(self):
+            if enabled:
+                assert result == 1
+  - |-
+    @pytest.mark.parametrize("enabled", [True, False])
+    def test_result(enabled):
+        if enabled:
+            assert result == 1
+  - |-
+    def test_result():
+        for result in results:
+            if result:
+                assert result == 1
+  - |-
+    def test_result():
+        with context():
+            if enabled:
+                assert result == 1
+  - |-
+    def test_result():
+        try:
+            calculate()
+        except ValueError:
+            if enabled:
+                pytest.fail("unexpected error")
+  - |-
+    def test_result():
+        if enabled: assert result == 1
