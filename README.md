@@ -1,6 +1,7 @@
 # python-mock-hooks
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23183666.svg)](https://doi.org/10.5281/zenodo.23183666)
+[![Research Software Directory Badge](https://img.shields.io/badge/rsd-00a3e3.svg)](https://research-software-directory.org/software/python-mock-precommit-hook)
 
 A pre-commit / prek hook that restricts mocking in Python tests:
 
