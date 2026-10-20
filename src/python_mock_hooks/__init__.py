@@ -15,6 +15,11 @@ def tests_without_ifs() -> int:
     return _scan("ifs-sgconfig.yml")
 
 
+def tests_without_private_imports() -> int:
+    """Check for private names or modules imported into tests."""
+    return _scan("private-imports-sgconfig.yml")
+
+
 def _scan(config_name: str) -> int:
     """Forward filenames to ast-grep and preserve its exit status."""
     filenames = sys.argv[1:]

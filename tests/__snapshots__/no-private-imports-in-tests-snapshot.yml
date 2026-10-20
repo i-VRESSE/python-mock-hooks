@@ -1,0 +1,285 @@
+id: no-private-imports-in-tests
+snapshots:
+  ? |-
+    def test_it():
+        from foo import _bar
+        assert _bar()
+  : labels:
+    - source: from foo import _bar
+      style: primary
+      start: 19
+      end: 39
+    - source: _bar
+      style: secondary
+      start: 35
+      end: 39
+    - source: _bar
+      style: secondary
+      start: 35
+      end: 39
+  from _foo import bar:
+    labels:
+    - source: from _foo import bar
+      style: primary
+      start: 0
+      end: 20
+    - source: _foo
+      style: secondary
+      start: 5
+      end: 9
+    - source: _foo
+      style: secondary
+      start: 5
+      end: 9
+  from _pytest.monkeypatch import MonkeyPatch:
+    labels:
+    - source: from _pytest.monkeypatch import MonkeyPatch
+      style: primary
+      start: 0
+      end: 43
+    - source: _pytest
+      style: secondary
+      start: 5
+      end: 12
+    - source: _pytest.monkeypatch
+      style: secondary
+      start: 5
+      end: 24
+  ? |-
+    from foo import (
+        bar,
+        _baz as baz,
+    )
+  : labels:
+    - source: |-
+        from foo import (
+            bar,
+            _baz as baz,
+        )
+      style: primary
+      start: 0
+      end: 45
+    - source: _baz
+      style: secondary
+      start: 31
+      end: 35
+    - source: _baz
+      style: secondary
+      start: 31
+      end: 35
+    - source: _baz as baz
+      style: secondary
+      start: 31
+      end: 42
+  from foo import __mangled:
+    labels:
+    - source: from foo import __mangled
+      style: primary
+      start: 0
+      end: 25
+    - source: __mangled
+      style: secondary
+      start: 16
+      end: 25
+    - source: __mangled
+      style: secondary
+      start: 16
+      end: 25
+  from foo import __private_:
+    labels:
+    - source: from foo import __private_
+      style: primary
+      start: 0
+      end: 26
+    - source: __private_
+      style: secondary
+      start: 16
+      end: 26
+    - source: __private_
+      style: secondary
+      start: 16
+      end: 26
+  from foo import _bar:
+    labels:
+    - source: from foo import _bar
+      style: primary
+      start: 0
+      end: 20
+    - source: _bar
+      style: secondary
+      start: 16
+      end: 20
+    - source: _bar
+      style: secondary
+      start: 16
+      end: 20
+  ? |-
+    from foo import _bar
+
+    def test_it():
+        assert _bar()
+  : labels:
+    - source: from foo import _bar
+      style: primary
+      start: 0
+      end: 20
+    - source: _bar
+      style: secondary
+      start: 16
+      end: 20
+    - source: _bar
+      style: secondary
+      start: 16
+      end: 20
+  from foo import _bar as bar:
+    labels:
+    - source: from foo import _bar as bar
+      style: primary
+      start: 0
+      end: 27
+    - source: _bar
+      style: secondary
+      start: 16
+      end: 20
+    - source: _bar
+      style: secondary
+      start: 16
+      end: 20
+    - source: _bar as bar
+      style: secondary
+      start: 16
+      end: 27
+  from foo import bar, _baz:
+    labels:
+    - source: from foo import bar, _baz
+      style: primary
+      start: 0
+      end: 25
+    - source: _baz
+      style: secondary
+      start: 21
+      end: 25
+    - source: _baz
+      style: secondary
+      start: 21
+      end: 25
+  from foo._bar import baz:
+    labels:
+    - source: from foo._bar import baz
+      style: primary
+      start: 0
+      end: 24
+    - source: _bar
+      style: secondary
+      start: 9
+      end: 13
+    - source: foo._bar
+      style: secondary
+      start: 5
+      end: 13
+  from foo._bar import baz as qux:
+    labels:
+    - source: from foo._bar import baz as qux
+      style: primary
+      start: 0
+      end: 31
+    - source: _bar
+      style: secondary
+      start: 9
+      end: 13
+    - source: foo._bar
+      style: secondary
+      start: 5
+      end: 13
+  from foo.bar import _baz:
+    labels:
+    - source: from foo.bar import _baz
+      style: primary
+      start: 0
+      end: 24
+    - source: _baz
+      style: secondary
+      start: 20
+      end: 24
+    - source: _baz
+      style: secondary
+      start: 20
+      end: 24
+  import _foo:
+    labels:
+    - source: import _foo
+      style: primary
+      start: 0
+      end: 11
+    - source: _foo
+      style: secondary
+      start: 7
+      end: 11
+    - source: _foo
+      style: secondary
+      start: 7
+      end: 11
+  import foo._bar:
+    labels:
+    - source: import foo._bar
+      style: primary
+      start: 0
+      end: 15
+    - source: _bar
+      style: secondary
+      start: 11
+      end: 15
+    - source: foo._bar
+      style: secondary
+      start: 7
+      end: 15
+  import foo._bar as bar:
+    labels:
+    - source: import foo._bar as bar
+      style: primary
+      start: 0
+      end: 22
+    - source: _bar
+      style: secondary
+      start: 11
+      end: 15
+    - source: foo._bar
+      style: secondary
+      start: 7
+      end: 15
+    - source: foo._bar as bar
+      style: secondary
+      start: 7
+      end: 22
+  import os, foo._bar:
+    labels:
+    - source: import os, foo._bar
+      style: primary
+      start: 0
+      end: 19
+    - source: _bar
+      style: secondary
+      start: 15
+      end: 19
+    - source: foo._bar
+      style: secondary
+      start: 11
+      end: 19
+  import os, foo._bar as bar:
+    labels:
+    - source: import os, foo._bar as bar
+      style: primary
+      start: 0
+      end: 26
+    - source: _bar
+      style: secondary
+      start: 15
+      end: 19
+    - source: foo._bar
+      style: secondary
+      start: 11
+      end: 19
+    - source: foo._bar as bar
+      style: secondary
+      start: 11
+      end: 26
