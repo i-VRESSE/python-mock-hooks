@@ -1,9 +1,10 @@
 # Naming options
 
-The repository contains two independently selectable Python test policies:
+The repository contains three independently selectable Python test policies:
 
 - Restrict `unittest.mock`, `mocker.patch`, and most `monkeypatch` methods.
 - Reject `if` statements inside `test_*` functions and methods.
+- Reject imports of private names or modules into tests.
 
 Compatibility is not a requirement. The options below assume a clean rename,
 without legacy hook IDs or command aliases.
@@ -63,14 +64,24 @@ forbidden, which does not match the implementation.
 | `check-test-conditionals` | Concise and uses the established `check-*` pattern. | Suggests coverage of conditional expressions and comprehension filters, which are allowed. |
 | `no-test-branching` | Communicates the policy's motivation. | Overstates coverage: `match`, conditional expressions, and other control flow remain allowed. |
 
+## Private-import hook names
+
+| Hook ID | Pros | Cons |
+| --- | --- | --- |
+| **`no-private-imports-in-tests`** | Direct; follows the prohibition pattern; matches the existing rule ID. | Its description should clarify that relative imports and dunder names remain allowed. |
+| `python-no-private-imports-in-tests` | Explicit language scope; follows pygrep-hooks naming. | Long and repeats the language in the recommended repository name. |
+| `tests-without-private-imports` | Readable and already used by the new hook; pairs with `tests-without-ifs`. | Less consistent with the action and prohibition patterns above. |
+| `check-test-private-imports` | Uses the established `check-*` pattern. | Does not immediately communicate that every matching import is forbidden. |
+| `tests-use-public-api` | Communicates the policy's motivation. | Overstates coverage: private attribute access such as `foo._bar()` is not checked. |
+
 ## Suggested combinations
 
-| Style | Repository | Mocking hook | Conditional-statement hook | Tradeoff |
-| --- | --- | --- | --- | --- |
-| **Recommended** | `python-test-hooks` | `check-test-mocking` | `no-if-in-tests` | Short, descriptive names; each hook uses the wording that best fits its actual policy. |
-| Explicit language | `python-test-hooks` | `python-check-test-mocking` | `python-no-if-in-tests` | Hook IDs make sense outside the repository context, at the cost of length. |
-| Consistent actions | `python-test-policy-hooks` | `check-test-mocking` | `check-test-if-statements` | Both IDs follow `check-*`; the prohibition is expressed in the hook description. |
-| Natural phrasing | `python-test-hooks` | `tests-with-restricted-mocking` | `tests-without-ifs` | Both names describe the desired tests; the mocking ID is lengthy. |
+| Style | Repository | Mocking hook | Conditional-statement hook | Private-import hook | Tradeoff |
+| --- | --- | --- | --- | --- | --- |
+| **Recommended** | `python-test-hooks` | `check-test-mocking` | `no-if-in-tests` | `no-private-imports-in-tests` | Short, descriptive names; each hook uses the wording that best fits its actual policy. |
+| Explicit language | `python-test-hooks` | `python-check-test-mocking` | `python-no-if-in-tests` | `python-no-private-imports-in-tests` | Hook IDs make sense outside the repository context, at the cost of length. |
+| Consistent actions | `python-test-policy-hooks` | `check-test-mocking` | `check-test-if-statements` | `check-test-private-imports` | All IDs follow `check-*`; the prohibition is expressed in the hook description. |
+| Natural phrasing | `python-test-hooks` | `tests-with-restricted-mocking` | `tests-without-ifs` | `tests-without-private-imports` | All names describe the desired tests; the mocking ID is lengthy. |
 
 With the recommended names, the consumer configuration would be:
 
@@ -81,6 +92,7 @@ repos:
     hooks:
       - id: check-test-mocking
       - id: no-if-in-tests
+      - id: no-private-imports-in-tests
 ```
 
 These are proposals; repository, package, command, and hook names have not been

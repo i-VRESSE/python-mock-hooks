@@ -1,0 +1,29 @@
+id: no-private-imports-in-tests
+language: Python
+severity: error
+message: Do not import private names or modules into tests; test the public API by making the name public or by testing its public caller
+note: Private means a leading underscore, except dunder names such as __version__ and a lone _. Relative imports are allowed so tests can share private helpers.
+utils:
+  private-dotted-name:
+    kind: dotted_name
+    has:
+      kind: identifier
+      # Leading underscore, excluding dunder names such as __version__ and a lone _.
+      regex: '^_[^_]|^__\w*([^_]|[^_]_)$'
+rule:
+  any:
+    - kind: import_statement
+    - kind: import_from_statement
+      # Relative imports refer to sibling test modules, such as shared helpers.
+      not:
+        has:
+          field: module_name
+          kind: relative_import
+  # Imported modules or names; the alias of an aliased_import is an identifier,
+  # not a dotted_name, so `import foo as _foo` is allowed.
+  has:
+    any:
+      - matches: private-dotted-name
+      - kind: aliased_import
+        has:
+          matches: private-dotted-name

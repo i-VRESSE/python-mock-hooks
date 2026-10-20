@@ -1,0 +1,58 @@
+id: no-private-imports-in-tests
+valid:
+  - from foo import bar
+  - from foo import bar as _bar
+  - from foo import bar, baz
+  - from foo import __version__
+  - from foo import __all__ as exported
+  - from gettext import _
+  - from foo.bar import baz
+  - from foo.__main__ import main
+  - from foo import *
+  - import foo
+  - import foo.bar
+  - import foo.bar as _bar
+  - import __future__
+  - from __future__ import annotations
+  - from . import _helpers
+  - from .conftest import _make_thing
+  - from .._helpers import build
+  - from ._helpers import build
+  - foo._bar()
+  - 'text = "from foo import _bar"'
+  - '# from foo import _bar'
+  - |-
+    from foo import bar
+
+    def test_it():
+        assert bar()
+invalid:
+  - from foo import _bar
+  - from foo import _bar as bar
+  - from foo import bar, _baz
+  - from foo import __mangled
+  - from foo import __private_
+  - from foo.bar import _baz
+  - |-
+    from foo import (
+        bar,
+        _baz as baz,
+    )
+  - from foo._bar import baz
+  - from foo._bar import baz as qux
+  - from _foo import bar
+  - from _pytest.monkeypatch import MonkeyPatch
+  - import foo._bar
+  - import _foo
+  - import foo._bar as bar
+  - import os, foo._bar
+  - import os, foo._bar as bar
+  - |-
+    from foo import _bar
+
+    def test_it():
+        assert _bar()
+  - |-
+    def test_it():
+        from foo import _bar
+        assert _bar()

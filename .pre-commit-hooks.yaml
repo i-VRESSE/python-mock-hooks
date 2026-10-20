@@ -17,3 +17,12 @@
   files: ^tests/.*\.py$
   require_serial: true
   stages: [pre-commit, pre-merge-commit, pre-push, manual]
+- id: tests-without-private-imports
+  name: Check for private imports in tests
+  description: Reject imports of private names or modules in tests; test the public API instead.
+  entry: tests-without-private-imports
+  language: python
+  types: [python]
+  files: ^tests/.*\.py$
+  require_serial: true
+  stages: [pre-commit, pre-merge-commit, pre-push, manual]

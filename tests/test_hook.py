@@ -56,6 +56,7 @@ def test_installed_hook(
     (tmp_path / ".pre-commit-config.yaml").write_text(
         f"repos:\n  - repo: {json.dumps(str(repo))}\n    rev: {revision}\n"
         "    hooks:\n      - id: python-mock-hooks\n      - id: tests-without-ifs\n"
+        "      - id: tests-without-private-imports\n"
     )
     (tmp_path / "tests").mkdir()
     (tmp_path / "src").mkdir()
@@ -67,7 +68,7 @@ def test_installed_hook(
     forbidden_mock = "from unittest.mock import Mock as Fake\nFake()\n"
     forbidden_mocker = 'mocker.patch.object(service, "calculate", return_value=42)\n'
     (tmp_path / "src/ignored.py").write_text(
-        forbidden + forbidden_mock + forbidden_mocker
+        forbidden + forbidden_mock + forbidden_mocker + "from example import _helper\n"
     )
     (tmp_path / "tests/ignored.txt").write_text(forbidden)
     # A broken consumer config must not affect the packaged rule.
@@ -75,6 +76,7 @@ def test_installed_hook(
     checked("git", "add", ".", cwd=tmp_path)
     checked(runner, "run", "python-mock-hooks", "--all-files", cwd=tmp_path)
     checked(runner, "run", "tests-without-ifs", "--all-files", cwd=tmp_path)
+    checked(runner, "run", "tests-without-private-imports", "--all-files", cwd=tmp_path)
     (tmp_path / "tests/test forbidden.py").write_text(forbidden)
     checked("git", "add", ".", cwd=tmp_path)
     result = run(runner, "run", "python-mock-hooks", "--all-files", cwd=tmp_path)
@@ -110,8 +112,25 @@ def test_installed_hook(
     assert "no-if-in-tests" in result.stdout + result.stderr
     assert "test branching.py" in result.stdout + result.stderr
 
+    (tmp_path / "tests/test branching.py").write_text("pass\n")
+    (tmp_path / "tests/test private.py").write_text(
+        "from example import _helper\n\ndef test_helper():\n    assert _helper()\n"
+    )
+    checked("git", "add", ".", cwd=tmp_path)
+    checked(runner, "run", "python-mock-hooks", "--all-files", cwd=tmp_path)
+    checked(runner, "run", "tests-without-ifs", "--all-files", cwd=tmp_path)
+    result = run(
+        runner, "run", "tests-without-private-imports", "--all-files", cwd=tmp_path
+    )
+    assert result.returncode != 0
+    assert "no-private-imports-in-tests" in result.stdout + result.stderr
+    assert "test private.py" in result.stdout + result.stderr
 
-@pytest.mark.parametrize("hook", ["python-mock-hooks", "tests-without-ifs"])
+
+@pytest.mark.parametrize(
+    "hook",
+    ["python-mock-hooks", "tests-without-ifs", "tests-without-private-imports"],
+)
 def test_no_filenames_does_not_scan(hook: str, tmp_path: Path) -> None:
     (tmp_path / "bad.py").write_text('monkeypatch.setattr(obj, "name", value)\n')
     checked(hook, cwd=tmp_path)

@@ -3,7 +3,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23183666.svg)](https://doi.org/10.5281/zenodo.23183666)
 [![Research Software Directory Badge](https://img.shields.io/badge/rsd-00a3e3.svg)](https://research-software-directory.org/software/python-mock-precommit-hook)
 
-Two independently selectable pre-commit / prek hooks for Python tests.
+Three independently selectable pre-commit / prek hooks for Python tests.
 
 ### `python-mock-hooks`
 
@@ -32,6 +32,19 @@ at module or class scope, as well as conditional expressions
 (`a if condition else b`) and comprehension filters. This hook does not
 restrict mocking; `python-mock-hooks` does not restrict branching.
 
+### `tests-without-private-imports`
+
+Blocks importing private names or modules into tests, for example
+`from foo import _bar`, `from foo._internal import bar`, or `import foo._bar`.
+Tests should use the public API: either make the name public or test its
+public caller.
+
+A name is private when it starts with an underscore. Dunder names such as
+`__version__`, a lone `_` (for example gettext), and private aliases
+(`import foo as _foo`) are permitted. Relative imports
+(`from .helpers import _build`) are permitted so tests can share private
+helpers. Attribute access such as `foo._bar()` is not checked.
+
 Check failures explain the policy to developers and LLM coding agents.
 
 Ruff [does not support custom lint plugins](https://docs.astral.sh/ruff/faq/#can-i-write-my-own-linter-plugins-for-ruff),
@@ -52,6 +65,7 @@ repos:
     hooks:
       - id: python-mock-hooks
       - id: tests-without-ifs
+      - id: tests-without-private-imports
 ```
 
 For `prek.toml` (prek):
@@ -60,13 +74,17 @@ For `prek.toml` (prek):
 [[repos]]
 repo = "https://github.com/i-VRESSE/python-mock-hooks"
 rev = "v0.3.0"
-hooks = [{ id = "python-mock-hooks" }, { id = "tests-without-ifs" }]
+hooks = [
+  { id = "python-mock-hooks" },
+  { id = "tests-without-ifs" },
+  { id = "tests-without-private-imports" },
+]
 ```
 
-Enable either hook or both. Run `prek run --all-files` to run all enabled hooks
+Enable any combination of hooks. Run `prek run --all-files` to run all enabled hooks
 (or use `pre-commit` instead of `prek`).
 
-Both hooks check Python files under `tests/` by default. For another layout,
+All hooks check Python files under `tests/` by default. For another layout,
 set `files` on each enabled hook:
 
 - YAML: `files: ^(tests|test)/.*\.py$`
