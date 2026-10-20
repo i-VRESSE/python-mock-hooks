@@ -8,3 +8,12 @@
   files: ^tests/.*\.py$
   require_serial: true
   stages: [pre-commit, pre-merge-commit, pre-push, manual]
+- id: tests-without-ifs
+  name: Check for if statements in tests
+  description: Reject if statements in test bodies; use separate tests or parametrization.
+  entry: tests-without-ifs
+  language: python
+  types: [python]
+  files: ^tests/.*\.py$
+  require_serial: true
+  stages: [pre-commit, pre-merge-commit, pre-push, manual]

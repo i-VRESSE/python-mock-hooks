@@ -55,7 +55,7 @@ def test_installed_hook(
     checked("git", "init", "-q", cwd=tmp_path)
     (tmp_path / ".pre-commit-config.yaml").write_text(
         f"repos:\n  - repo: {json.dumps(str(repo))}\n    rev: {revision}\n"
-        "    hooks:\n      - id: python-mock-hooks\n"
+        "    hooks:\n      - id: python-mock-hooks\n      - id: tests-without-ifs\n"
     )
     (tmp_path / "tests").mkdir()
     (tmp_path / "src").mkdir()
@@ -74,6 +74,7 @@ def test_installed_hook(
     (tmp_path / "sgconfig.yml").write_text("ruleDirs: [does-not-exist]\n")
     checked("git", "add", ".", cwd=tmp_path)
     checked(runner, "run", "python-mock-hooks", "--all-files", cwd=tmp_path)
+    checked(runner, "run", "tests-without-ifs", "--all-files", cwd=tmp_path)
     (tmp_path / "tests/test forbidden.py").write_text(forbidden)
     checked("git", "add", ".", cwd=tmp_path)
     result = run(runner, "run", "python-mock-hooks", "--all-files", cwd=tmp_path)
@@ -96,11 +97,24 @@ def test_installed_hook(
     assert result.returncode != 0
     assert "no-mocker-patch" in result.stdout + result.stderr
     assert "test mocker.py" in result.stdout + result.stderr
+    checked(runner, "run", "tests-without-ifs", "--all-files", cwd=tmp_path)
+
+    (tmp_path / "tests/test mocker.py").write_text("pass\n")
+    (tmp_path / "tests/test branching.py").write_text(
+        "def test_result():\n    if enabled:\n        assert result == 1\n"
+    )
+    checked("git", "add", ".", cwd=tmp_path)
+    checked(runner, "run", "python-mock-hooks", "--all-files", cwd=tmp_path)
+    result = run(runner, "run", "tests-without-ifs", "--all-files", cwd=tmp_path)
+    assert result.returncode != 0
+    assert "no-if-in-tests" in result.stdout + result.stderr
+    assert "test branching.py" in result.stdout + result.stderr
 
 
-def test_no_filenames_does_not_scan(tmp_path: Path) -> None:
+@pytest.mark.parametrize("hook", ["python-mock-hooks", "tests-without-ifs"])
+def test_no_filenames_does_not_scan(hook: str, tmp_path: Path) -> None:
     (tmp_path / "bad.py").write_text('monkeypatch.setattr(obj, "name", value)\n')
-    checked("python-mock-hooks", cwd=tmp_path)
+    checked(hook, cwd=tmp_path)
 
 
 def test_no_uv_dependency(tmp_path: Path) -> None:

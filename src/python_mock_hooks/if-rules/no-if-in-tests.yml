@@ -1,0 +1,15 @@
+id: no-if-in-tests
+language: Python
+severity: error
+message: Do not use if statements in test bodies; use separate tests or pytest.mark.parametrize for each case
+rule:
+  kind: if_statement
+  inside:
+    kind: function_definition
+    has:
+      field: name
+      regex: '^test_'
+    stopBy:
+      any:
+        - kind: function_definition
+        - kind: class_definition
